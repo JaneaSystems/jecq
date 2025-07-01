@@ -162,10 +162,8 @@ jobs:
         run: |
           echo "Listing wheels-linux:"
           ls -l wheels-linux
-          mv wheels-linux/jecq-*.whl wheels-linux/jecq-linux.whl
           echo "Listing wheels-windows:"
           ls -l wheels-windows
-          mv wheels-windows/jecq-*.whl wheels-windows/jecq-windows.whl
 
       - name: Create draft release
         uses: softprops/action-gh-release@v1
