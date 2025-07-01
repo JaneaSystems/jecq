@@ -1,0 +1,10 @@
+jecq
+faiss-cpu
+sentence_transformers
+scipy
+datasets
+numpy>=2
+pandas
+psutil
+frozenlist==1.6.0  # pinned to avoid weird issues with 1.6.2
+tabulate

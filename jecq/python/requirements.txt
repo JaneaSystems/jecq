@@ -1,0 +1,5 @@
+faiss-cpu
+numpy>=2
+setuptools
+packaging
+swig

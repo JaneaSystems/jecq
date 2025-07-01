@@ -1,0 +1,36 @@
+FROM ubuntu:22.04
+
+ARG BUILD_TYPE=Debug
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        python3 python3-pip python3-venv \
+        build-essential cmake git wget \
+        libopenblas-dev sudo && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install CMake >= 3.24.0
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.27.9/cmake-3.27.9-linux-x86_64.sh && \
+    chmod +x cmake-3.27.9-linux-x86_64.sh && \
+    ./cmake-3.27.9-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.27.9-linux-x86_64.sh
+
+WORKDIR /app
+
+# Copy the entire repo
+COPY . .
+
+# Install requirements and MKL
+RUN chmod +x ./install_requirements.sh ./install_mkl.sh ./build.sh ./build_demo.sh && \
+    ./install_requirements.sh && \
+    ./install_mkl.sh
+
+# Build the project
+RUN ./build.sh $BUILD_TYPE
+
+# Build demo environment and activate venv
+#RUN ./build_demo.sh
+
+# Set entrypoint to run the demo script in the venv
+#CMD ["/bin/bash", "-c", "source ./build_linux/.venv/bin/activate && python3 ./demos/demo_sample_search.py"]

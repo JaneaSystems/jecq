@@ -1,0 +1,55 @@
+[flake8]
+# Maximum line length - match black's line length
+max-line-length = 100
+extend-ignore = E203, W503
+# E501 is line too long, we want to check this
+# E203: Whitespace before ':' (conflicts with black)
+# W503: Line break before binary operator (conflicts with black)
+
+# Exclude patterns
+exclude =
+    .git,
+    __pycache__,
+    build,
+    build_linux,
+    dist,
+    *.pyc,
+    *.pyo,
+    *.pyd,
+    .Python,
+    env,
+    venv,
+    .venv,
+    .env,
+    .tox,
+    .nox,
+    .coverage,
+    htmlcov,
+    .pytest_cache,
+    .mypy_cache,
+
+# Complexity settings
+max-complexity = 10
+
+# Docstring settings
+docstring-convention = google
+
+# Import order
+import-order-style = google
+
+# Naming conventions
+# N801: Class names should use CapWords convention
+# N802: Function name should be lowercase
+# N803: Argument name should be lowercase
+# N804: First argument of a classmethod should be named 'cls'
+# N805: First argument of a method should be named 'self'
+naming-convention =
+    class=CapWords
+    function=lower
+    method=lower
+    module=lower
+    const=UPPER
+    variable=lower
+    parameter=lower
+    classmethod=lower
+    staticmethod=lower

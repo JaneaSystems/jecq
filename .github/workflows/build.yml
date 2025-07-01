@@ -1,0 +1,179 @@
+# Copyright (c) 2025 Janea Systems
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+name: Build and Lint
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-cpp:
+    name: Lint C++ files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Run pre-commit hooks
+        run: pre-commit run --all-files
+  
+  build-windows:
+    name: Build Windows
+    runs-on: windows-2025
+    needs: lint-cpp
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install mkl
+        shell: pwsh
+        run: |
+          winget install --id=Intel.oneMKL -e --accept-package-agreements --accept-source-agreements --disable-interactivity
+      
+      - name: Build
+        shell: pwsh
+        env:
+          JECQ_CI: true
+          VCPKG_ROOT: ../vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          .\bootstrap-vcpkg.bat
+
+          .\vcpkg integrate install
+          .\vcpkg install gflags:x64-windows
+          cd ..
+          .\build.ps1
+      
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          name: wheels-windows
+          path: wheels/windows/*.whl
+          if-no-files-found: error
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: lint-cpp
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Debug image
+        # if not on main
+        if: github.ref != 'refs/heads/main'
+        run: docker build --build-arg BUILD_TYPE=Debug --platform=linux/amd64 -t jecq-wheel-image -f Dockerfile.linux .
+
+      - name: Build Docker Release image
+        # if on main
+        if: github.ref == 'refs/heads/main'
+        run: docker build --build-arg BUILD_TYPE=Release --platform=linux/amd64 -t jecq-wheel-image -f Dockerfile.linux .
+
+      - name: Run container to build wheel
+        run: docker run --name jecq-wheel-builder jecq-wheel-image
+
+      - name: Copy wheel from container
+        run: |
+          rm -rf wheels/linux
+          mkdir -p wheels/linux
+          docker cp jecq-wheel-builder:/app/wheels/linux/. wheels/linux/
+          docker rm jecq-wheel-builder
+      
+      - name: Run sample demo in clean environment
+        run: |
+          pip install ./wheels/linux/jecq-0.0.1-py3-none-any.whl
+          pip install -r ./demos/requirements.txt
+          # Run demo script
+          python3 ./demos/demo_sample_search.py
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          name: wheels-linux
+          path: wheels/linux/*.whl
+          if-no-files-found: error
+
+  # Only upload wheels on main branch
+  upload-wheels:
+    name: Upload wheels
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [build-windows, build-linux]
+    steps:
+      - name: Download Wheels Linux
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-linux
+          path: wheels-linux
+      
+      - name: Download Wheels Windows
+        uses: actions/download-artifact@v4
+        with:
+          name: wheels-windows
+          path: wheels-windows
+      
+      - name: Run ls
+        run: |
+          echo "Listing wheels-linux:"
+          ls -l wheels-linux
+          mv wheels-linux/jecq-0.0.1-py3-none-any.whl wheels-linux/jecq-linux.whl
+          echo "Listing wheels-windows:"
+          ls -l wheels-windows
+          mv wheels-windows/jecq-0.0.1-py3-none-any.whl wheels-windows/jecq-windows.whl
+
+      - name: Create draft release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "JECQ Release Draft"
+          files: |
+            wheels-linux/*.whl
+            wheels-windows/*.whl
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
