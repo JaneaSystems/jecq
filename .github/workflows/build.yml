@@ -123,6 +123,11 @@ jobs:
           mkdir -p wheels/linux
           docker cp jecq-wheel-builder:/app/wheels/linux/. wheels/linux/
           docker rm jecq-wheel-builder
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
       
       - name: Run sample demo in clean environment
         run: |
