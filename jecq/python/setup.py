@@ -101,12 +101,14 @@ try:
     from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
 
     """Custom bdist_wheel to ensure that the root is not pure Python."""
+
     class bdist_wheel(_bdist_wheel):
         def finalize_options(self):
             _bdist_wheel.finalize_options(self)
             self.root_is_pure = False
+
 except ImportError:
-    bdist_wheel = None
+    print("Not using custom bdist_wheel; wheel package not installed")
 
 setup(
     name="jecq",
@@ -123,5 +125,5 @@ setup(
         "jecq": ["*.so", "*.pyd"],
     },
     zip_safe=False,
-    cmdclass={'bdist_wheel': bdist_wheel},
+    cmdclass={"bdist_wheel": bdist_wheel},
 )
