@@ -96,13 +96,26 @@ if found_swigjecq_sve:
 long_description = """
 Jecq is a library for efficient similarity search based on the Faiss library.
 """
+
+try:
+    from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+
+    """Custom bdist_wheel to ensure that the root is not pure Python."""
+    class bdist_wheel(_bdist_wheel):
+        def finalize_options(self):
+            _bdist_wheel.finalize_options(self)
+            self.root_is_pure = False
+except ImportError:
+    bdist_wheel = None
+
 setup(
     name="jecq",
     version="0.0.1",
     description="A Faiss-based library for efficient similarity search "
     "and clustering of dense vectors",
     long_description=long_description,
-    license="TODO",
+    url="https://github.com/JaneaSystems/jecq",
+    license="MIT",
     keywords="search nearest neighbors",
     install_requires=["numpy", "packaging", "faiss-cpu"],
     packages=["jecq"],
@@ -110,4 +123,5 @@ setup(
         "jecq": ["*.so", "*.pyd"],
     },
     zip_safe=False,
+    cmdclass={'bdist_wheel': bdist_wheel},
 )
