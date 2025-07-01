@@ -46,6 +46,7 @@ pushd .
 echo "Setting up virtual environment..."
 python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -r ../jecq/python/requirements.txt
 popd
 
@@ -87,13 +88,22 @@ fi
 echo "Installing Python package..."
 pushd .
 cd ./jecq/python
-# Make sure wheel is installed
 pip install wheel
-python3 setup.py install
-pip wheel --no-binary jecq .
+python3 setup.py bdist_wheel
+# Repair wheel for Linux compatibility
+pip install auditwheel
+pushd ./dist
+for f in jecq*.whl; do
+  auditwheel repair "$f" -w . && rm "$f"
+done
+popd
+# Install wheels
+pip install dist/jecq*.whl
+popd
+
+# Verify installation
 python3 -c "import jecq;jecq.IndexJecq();jecq.IndexIVFJecq()"
 python3 -c "import jecq;assert jecq.IndexJecq.__module__ == 'jecq.swigjecq_avx2'"
-popd
 
 # Update wheels
 echo "Updating wheels..."
