@@ -65,6 +65,7 @@ Write-Output "Setting up virtual environment..."
 Push-Location .
 python -m venv .venv; Test-Exit-Code
 ./.venv/scripts/activate.ps1; Test-Exit-Code
+python -m pip install --upgrade pip; Test-Exit-Code
 pip install -r ../jecq/python/requirements.txt; Test-Exit-Code
 Pop-Location
 
@@ -149,12 +150,14 @@ Test-Exit-Code
 # Install Python package
 Write-Output "Installing Python package..."
 Push-Location jecq/python
-python setup.py install; Test-Exit-Code
 pip install wheel; Test-Exit-Code
-pip wheel --no-binary jecq .; Test-Exit-Code
+python setup.py bdist_wheel; Test-Exit-Code
+Get-ChildItem dist/jecq*.whl | ForEach-Object { pip install $_.FullName }
+Pop-Location
+
+# Verify installation
 python -c "import jecq;jecq.IndexJecq();jecq.IndexIVFJecq()"; Test-Exit-Code
 python -c "import jecq;assert jecq.IndexJecq.__module__ == 'jecq.swigjecq_avx2'"; Test-Exit-Code
-Pop-Location
 
 # Update wheels
 Write-Output "Updating wheels..."

@@ -6,7 +6,10 @@
     "cSpell.words": [
         "addlicense",
         "atleast",
+        "auditwheel",
+        "bdist",
         "BLAS",
+        "cmdclass",
         "CMPLR",
         "DBLA",
         "DBUILD",

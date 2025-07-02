@@ -1,5 +1,5 @@
 faiss-cpu
 numpy>=2
-setuptools
+setuptools>=80
 packaging
 swig

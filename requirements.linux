@@ -8,3 +8,4 @@ build-essential
 autoconf
 automake
 libtool
+patchelf
