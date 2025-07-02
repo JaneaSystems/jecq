@@ -53,9 +53,6 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-2025
-    env:
-      Python3_FIND_STRATEGY: LOCATION
-      Python3_FIND_COMPONENTS: Interpreter,Development
     needs: lint-cpp
     steps:
       - name: Checkout code
@@ -67,6 +64,31 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Tell CMake exactly where Python + NumPy live
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip numpy
+
+          # this is set by setup-python@v5
+          $root = $env:pythonLocation
+
+          $numpy_inc = python -c "import numpy as np; print(np.get_include())"
+
+          # seed CMake's cache variables for FindPython3
+          Write-Host "Python3_ROOT_DIR=$root"            | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Python3_FIND_STRATEGY=LOCATION"     | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Python3_FIND_COMPONENTS=Interpreter,Development,NumPy" \
+                                                          | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+          # explicit fall-backs
+          Write-Host "Python3_INCLUDE_DIR=$root\Include"  | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Python3_LIBRARY=$root\libs\python3.12.lib" \
+                                                          | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+          # NumPy include
+          Write-Host "Python3_NumPy_INCLUDE_DIRS=$numpy_inc" \
+                                                          | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Install mkl
         shell: pwsh
