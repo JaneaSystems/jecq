@@ -4,11 +4,17 @@ This guide provides instructions for installing Jecq on Linux and Windows. You c
 ## Option 1: Install from Pre-built Wheels (Recommended)
 This is the easiest way to install the Jecq Python package. Pre-built wheels are included with each release.
 
-- Ensure a Python 3.12 environment is activated, for example via [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main).
-- Download the `.whl` wheel file for your platform from the [latest release](https://github.com/JaneaSystems/jecq/releases/latest).
-- Install the wheel via pip:
+- Ensure a Python 3.12 environment is activated, for example via [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main):
 ```sh
-pip install <path_to_wheel>
+conda create -n jecq_test python=3.12 -c conda-forge
+conda activate jecq_test
+```
+
+- Download the `.whl` wheel file for your platform from the [latest release](https://github.com/JaneaSystems/jecq/releases/latest).
+
+- Install the wheel via `pip`:
+```sh
+pip install <path_to_downloaded_wheel>
 ```
 
 ## Option 2: Build from Source
