@@ -138,7 +138,7 @@ except ImportError:
 
 setup(
     name="jecq",
-    version="0.0.1",
+    version="1.0.0",
     description="A Faiss-based library for efficient similarity search "
     "and clustering of dense vectors",
     long_description=long_description,

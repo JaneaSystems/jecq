@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.24.0 FATAL_ERROR)
 set(JECQ_LANGUAGES CXX)
 
 project(jecq
-  VERSION 0.0.1
+  VERSION 1.0.0
   DESCRIPTION "A Faiss-based library for efficient similarity search and clustering of dense vectors"
   HOMEPAGE_URL "https://github.com/JaneaSystems/jecq"
   LANGUAGES ${JECQ_LANGUAGES})
