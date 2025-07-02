@@ -42,7 +42,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.12'
 
       - name: Install pre-commit
         run: pip install pre-commit
@@ -59,6 +59,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
       - name: Install mkl
         shell: pwsh
@@ -127,7 +132,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: '3.12'
       
       - name: Run sample demo in clean environment
         run: |
