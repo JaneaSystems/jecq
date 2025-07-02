@@ -57,7 +57,7 @@ Distance Metric: Supports [inner product distance](https://github.com/facebookre
 Note: "Variance" here refers to eigenvalues from the covariance matrix, not naive sample variance.
 
 ## Installation
-Jecq is distributed with precompiled Python libraries. The core is implemented in C++ and requires only a [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) implementation. Compiles with CMake. See [INSTALL.md] for step-by-step instructions.
+Jecq is distributed with precompiled Python libraries. The core is implemented in C++ and requires only a [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) implementation. Compiles with CMake. See [INSTALL.md](INSTALL.md) for step-by-step instructions.
 
 ## Use Cases
 * Retrieval-augmented generation (RAG)

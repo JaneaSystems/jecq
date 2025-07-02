@@ -4,25 +4,15 @@ This guide provides instructions for installing Jecq on Linux and Windows. You c
 ## Option 1: Install from Pre-built Wheels (Recommended)
 This is the easiest way to install the Jecq Python package. Pre-built wheels are included with each release.
 
-### Linux
-
+- Ensure a Python 3.12 environment is activated, for example via [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main).
+- Download the `.whl` wheel file for your platform from the [latest release](https://github.com/JaneaSystems/jecq/releases/latest).
+- Install the wheel via pip:
 ```sh
-# This script installs system-level dependencies like BLAS and OpenMP using apt.
-./install_requirements.sh
-
-# The wildcard (*) automatically selects the correct version from the directory.
-pip install "$(ls ./wheels/linux/jecq-*.whl | head -n1)"
-```
-
-### Windows
-
-```sh
-# The wildcard (*) automatically selects the correct version from the directory.
-pip install (Get-ChildItem .\wheels\windows\jecq-*.whl | Select-Object -First 1 -ExpandProperty FullName)
+pip install <path_to_wheel>
 ```
 
 ## Option 2: Build from Source
-Building from source is recommended for developers who need to modify the C++ core or link against it in their own applications.
+Building from source is recommended for developers who need to modify the C++ core or link against it in their own applications. It is also necessary if no wheel file is available for your platform or Python version.
 
 For Faiss Developers: If you are already building Faiss, the process for Jecq is nearly identical and supports the same CMake flags.
 
