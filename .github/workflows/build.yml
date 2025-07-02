@@ -53,6 +53,9 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-2025
+    env:
+      Python3_FIND_STRATEGY: LOCATION
+      Python3_FIND_COMPONENTS: Interpreter,Development
     needs: lint-cpp
     steps:
       - name: Checkout code
