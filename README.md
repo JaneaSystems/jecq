@@ -65,3 +65,7 @@ Jecq is distributed with precompiled Python libraries. The core is implemented i
 * Semantic search
 * Edge AI and IoT deployments
 * Cost-sensitive enterprise AI search
+
+---
+
+Crafted with :heart: by [Janea Systems](https://www.janeasystems.com)
