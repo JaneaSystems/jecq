@@ -22,8 +22,8 @@
 import jecq
 import faiss
 
-type Params = list[float]
-type Bounds = tuple[float, float]
-type BoundsList = list[Bounds]
-type Index = faiss.Index | jecq.Index
-type ClosestLabels = list[list[int]]
+Params = list[float]
+Bounds = tuple[float, float]
+BoundsList = list[Bounds]
+Index = faiss.Index | jecq.Index
+ClosestLabels = list[list[int]]
