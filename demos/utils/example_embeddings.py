@@ -50,7 +50,7 @@ def get_example_embeddings(
 
     ds = load_dataset(path, name, split=f"train[:{num_texts}]", cache_dir=cache_dir)
 
-    texts = ds[feature_name]
+    texts = list(ds[feature_name])
 
     sanitized_path = path.replace("/", "_")
     normalize = True
