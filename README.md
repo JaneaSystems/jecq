@@ -1,6 +1,6 @@
 # Jecq
 
-Jecq (Just Enough Compression & Quantization) is an open-source C++ library by Janea Systems for efficient similarity search of dense vectors. It is designed as a drop-in extension for [Faiss](https://github.com/facebookresearch/faiss), Meta’s popular library for fast vector similarity search. Jecq introduces advanced, dimension-aware compression techniques that significantly reduce memory footprint while maintaining high search accuracy. Complete wrappers for Python/numpy are provided.
+Jecq (Just Enough Compression & Quantization) is an open-source C++ library by Janea Systems for efficient similarity search of dense vectors. It is designed as a drop-in replacement for [Faiss](https://github.com/facebookresearch/faiss), Meta’s popular library for fast vector similarity search. Jecq introduces advanced, dimension-aware compression techniques that significantly reduce memory footprint while maintaining high search accuracy. Complete wrappers for Python/numpy are provided.
 
 ## Key Features
 ### Dimension-Aware Compression
